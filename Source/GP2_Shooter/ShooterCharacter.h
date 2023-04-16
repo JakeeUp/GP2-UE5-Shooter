@@ -49,6 +49,17 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float BaseLookUpRate;
 
+	//Fire Sound Cue
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Combat,meta = (AllowPrivateAccess = "true"))
+	class USoundCue* FireSound;
+
+	//Muzzle Flash Particle
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Combat,meta = (AllowPrivateAccess = "true"))
+	class UParticleSystem* MuzzleFlash;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Combat,meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* HipFireMontage;
+
 
 public:
 
