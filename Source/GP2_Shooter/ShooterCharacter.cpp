@@ -159,7 +159,9 @@ void AShooterCharacter::FireWeapon()
 
 		if(MuzzleFlash)
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),MuzzleFlash, SocketTransform);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),
+				MuzzleFlash,
+				SocketTransform);
 		}
 		
 		//Get size of the viewport
@@ -258,7 +260,7 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, 
 	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(this,0),
 			CrossHairLocation,
 			CrosshairWorldPosition,
-			CrosshairWorldDirection);
+							CrosshairWorldDirection);
 	if(bScreenToWorld)//was successful?
 		{
 			FHitResult ScreenTraceHit;

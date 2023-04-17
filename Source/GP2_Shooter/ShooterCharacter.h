@@ -19,6 +19,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//movement 
 	void MoveForward (float Value);
 	void MoveRight (float Value);
 	void TurnAtRate(float Rate);
@@ -26,17 +27,19 @@ protected:
 	void Turn(float Value);
 	void LookUp(float Value);
 
+	//shooting 
 	void FireWeapon();
 	void AimingButtonPressed();
 	void AimingButtonReleased();
 
+	//cam 
 	void CameraInterpZoom(float DeltaTime);
 	void SetLookRates();
 
 	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation);
 
+	//crosshair 
 	void CalculateCrosshairSpread(float DeltaTime);
-
 	void StartCrosshairBulletFire();
 	
 	UFUNCTION()
