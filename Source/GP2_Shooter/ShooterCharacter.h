@@ -44,6 +44,14 @@ protected:
 	
 	UFUNCTION()
 	void FinishCrosshairBulletFire();
+
+	void FireButtonPressed();
+	void FireButtonReleased();
+
+	void StartFireTimer();
+
+	UFUNCTION()
+	void AutoFireReset();
 	
 
 public:	
@@ -146,6 +154,14 @@ private:
 	float ShootTimeDuration;
 	bool bFiringBullet;
 	FTimerHandle CrosshairShootTimer;
+
+	bool bFireButtonPressed;
+
+	bool bShouldFire;
+
+	float AutomaticFireRate;
+
+	FTimerHandle AutoFireTimer;
 
 
 public:
