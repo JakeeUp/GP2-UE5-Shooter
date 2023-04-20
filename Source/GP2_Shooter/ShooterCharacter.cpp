@@ -10,8 +10,11 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "DrawDebugHelpers.h"
 #include "Item.h"
+#include "Weapon.h"
 #include "Components/WidgetComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
@@ -89,7 +92,7 @@ void AShooterCharacter::BeginPlay()
 		CameraDefaultFOV = GetFollowCamera()->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
-	
+	EquipWeapon(SpawnDefaultWeapon());
 }
 
 void AShooterCharacter::MoveForward(float Value)
@@ -480,6 +483,52 @@ bool AShooterCharacter::TraceUnderCrosshairs(FHitResult& OutHitResult, FVector& 
 	return false;
 }
 
+AWeapon* AShooterCharacter::SpawnDefaultWeapon()
+{
+	if (DefaultWeaponClass)
+	{
+		return GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
+	}
+
+	return nullptr;
+}
+
+void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
+{
+	if (WeaponToEquip)
+	{
+		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(
+			FName("RightHandSocket"));
+		if (HandSocket)
+		{
+			HandSocket->AttachActor(WeaponToEquip, GetMesh());
+		}
+		EquippedWeapon = WeaponToEquip;
+		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
+	}
+}
+
+void AShooterCharacter::DropWeapon()
+{
+	if(EquippedWeapon)
+	{
+		FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+		EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
+
+		EquippedWeapon->SetItemState(EItemState::EIS_Falling);
+		EquippedWeapon->ThrowWeapon();
+	}
+}
+
+void AShooterCharacter::SelectButtonPressed()
+{
+	DropWeapon();
+}
+
+void AShooterCharacter::SelectButtonReleased()
+{
+}
+
 // Called every frame
 void AShooterCharacter::Tick(float DeltaTime)
 {
@@ -529,6 +578,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		&AShooterCharacter::AimingButtonPressed);
 	PlayerInputComponent->BindAction("AimingButton", IE_Released, this, 
 		&AShooterCharacter::AimingButtonReleased);
+
+	PlayerInputComponent->BindAction("Select", IE_Pressed, this, 
+		&AShooterCharacter::SelectButtonPressed);
+	PlayerInputComponent->BindAction("Select", IE_Released, this, 
+		&AShooterCharacter::SelectButtonReleased);
 
 }
 

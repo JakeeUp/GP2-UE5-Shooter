@@ -58,7 +58,17 @@ protected:
 	//line trace for item
 	bool TraceUnderCrosshairs(FHitResult& OutHitResult, FVector& OutHitLocation);
 	
+	class AWeapon* SpawnDefaultWeapon();
 
+	void EquipWeapon(class AWeapon* WeaponToEquip);
+
+	void DropWeapon();
+
+	void SelectButtonPressed();
+
+	void SelectButtonReleased();
+	
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -177,6 +187,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = Items,meta = (AllowPrivateAccess = "true"))
 	class AItem* TraceHitItemLastFrame;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	AWeapon* EquippedWeapon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeapon> DefaultWeaponClass;
 public:
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const {return CameraBoom;}
