@@ -67,6 +67,8 @@ protected:
 	void SelectButtonPressed();
 
 	void SelectButtonReleased();
+
+	void SwapWeapon(AWeapon* WeaponToSwap);
 	
 	
 public:	
@@ -192,6 +194,15 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> DefaultWeaponClass;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = Combat, meta = (AllowPrivateAccess = "true"))
+	AItem* TraceHitItem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = Items,meta = (AllowPrivateAccess = "true"))
+	float CameraInterpDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category = Items,meta = (AllowPrivateAccess = "true"))
+	float CameraInterpElevation;
 public:
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const {return CameraBoom;}
@@ -203,4 +214,8 @@ public:
 	void IncrementOverlappedItemCount(int8 Amount);
 	UFUNCTION(BlueprintCallable)
 	float GetCrosshairSpreadMultiplier() const;
+
+	FVector GetCameraInterpLocation();
+
+	void GetPickupItem(AItem* Item);
 };
