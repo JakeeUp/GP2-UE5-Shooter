@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "AmmoType.h"
 #include "ShooterCharacter.generated.h"
 
 UENUM(BlueprintType)
-enum class EAmmoType : uint8
+enum class ECombatState : uint8
 {
-	EAT_9mm UMETA(DisplayName = "9mm"),
-	EAT_AR UMETA(DisplayName = "AssaultRifle"),
+	ECS_Unoccupied UMETA(DisplayName = "Unoccupied"),
+	ECS_FireTimerInProgress UMETA(DisplayName = "FireTimerInProgress"),
+	ECS_Reloading UMETA(DisplayName = "Reloading"),
 
-	EAT_MAX UMETA(DisplayName = "DefaultMAX")
+	ECS_NAX UMETA(DisplayName = "DefaultMAX")
 };
 
 UCLASS()
@@ -80,6 +82,26 @@ protected:
 	void SwapWeapon(AWeapon* WeaponToSwap);
 
 	void InitializeAmmoMap();
+
+	bool WeaponHasAmmo();
+
+	void PlayFireSound();
+
+	void SendBullet();
+
+	void PlayGunFireMontage();
+
+	void ReloadButtonPressed();
+
+	void ReloadWeapon();
+
+	bool CarryingAmmo();
+
+	UFUNCTION(BlueprintCallable)
+	void GrabClip();
+
+	UFUNCTION(BlueprintCallable)
+	void ReleaseClip();
 	
 	
 public:	
@@ -223,6 +245,21 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Items, meta = (AllowPrivateAccess = "true"))
 	int32 StartingARAmmo;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	ECombatState CombatState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* ReloadMontage;
+
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	FTransform ClipTransform;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* HandSceneComponent;
 public:
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const {return CameraBoom;}
