@@ -21,7 +21,8 @@ UShooterAnimInstance::UShooterAnimInstance() :
 	RootYawOffset(0.f),
 	Pitch(0.f),
 	bReloading(false),
-	OffsetState(EOffsetState::EOS_Hip)
+	OffsetState(EOffsetState::EOS_Hip),
+	RecoilWeight(1.0f)
 {
 	
 }
@@ -100,12 +101,12 @@ void UShooterAnimInstance::NativeInitializeAnimation()
 void UShooterAnimInstance::TurnInPlace()
 {
 	if (ShooterCharacter == nullptr) return;
-	
+
 	Pitch = ShooterCharacter->GetBaseAimRotation().Pitch;
-	
+
 	if (Speed > 0 || bIsInAir)
 	{
-		// dont turn in place if the char is moving
+		// Don't want to turn in place; Character is moving
 		RootYawOffset = 0.f;
 		TIPCharacterYaw = ShooterCharacter->GetActorRotation().Yaw;
 		TIPCharacterYawLastFrame = TIPCharacterYaw;
@@ -118,10 +119,10 @@ void UShooterAnimInstance::TurnInPlace()
 		TIPCharacterYaw = ShooterCharacter->GetActorRotation().Yaw;
 		const float TIPYawDelta{ TIPCharacterYaw - TIPCharacterYawLastFrame };
 
-		// root yaw offset is updated and clamped to [-180,180]
+		// Root Yaw Offset, updated and clamped to [-180, 180]
 		RootYawOffset = UKismetMathLibrary::NormalizeAxis(RootYawOffset - TIPYawDelta);
 
-		// if its at 1.0 turning, 0.0 is not turning
+		// 1.0 if turning, 0.0 if not
 		const float Turning{ GetCurveValue(TEXT("Turning")) };
 		if (Turning > 0)
 		{
@@ -129,7 +130,7 @@ void UShooterAnimInstance::TurnInPlace()
 			RotationCurve = GetCurveValue(TEXT("Rotation"));
 			const float DeltaRotation{ RotationCurve - RotationCurveLastFrame };
 
-			// if RootYawOffset is > 0 then its turning left, if its < 0 then its turning right 
+			// RootYawOffset > 0, -> Turning Left. RootYawOffset < 0, -> Turning Right.
 			RootYawOffset > 0 ? RootYawOffset -= DeltaRotation : RootYawOffset += DeltaRotation;
 
 			const float ABSRootYawOffset{ FMath::Abs(RootYawOffset) };
@@ -139,13 +140,43 @@ void UShooterAnimInstance::TurnInPlace()
 				RootYawOffset > 0 ? RootYawOffset -= YawExcess : RootYawOffset += YawExcess;
 			}
 		}
-
-		if (GEngine) GEngine->AddOnScreenDebugMessage(
-			1,
-			-1,
-			FColor::Cyan,
-			FString::Printf(TEXT("RootYawOffset: %f"),
-				RootYawOffset));
+	}
+	
+	if (bTurningInPlace)
+	{
+		if (bReloading)
+		{
+			RecoilWeight = 1.f;
+		}
+		else
+		{
+			RecoilWeight = 0.f;
+		}
+	}
+	else // not turning in place
+	{
+		if (bCrouching)
+		{
+			if (bReloading)
+			{
+				RecoilWeight = 1.f;
+			}
+			else
+			{
+				RecoilWeight = 0.1f;
+			}
+		}
+		else
+		{
+			if (bAiming || bReloading)
+			{
+				RecoilWeight = 1.f;
+			}
+			else
+			{
+				RecoilWeight = 0.5f;
+			}
+		}
 	}
 }
 

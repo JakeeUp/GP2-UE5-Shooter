@@ -104,7 +104,14 @@ protected:
 	void ReleaseClip();
 
 	void CrouchButtonPressed();
-	
+
+	virtual void Jump() override;
+
+	void InterpCapsuleHalfHeight(float DeltaTime);
+
+	void Aim();
+
+	void StopAim();
 	
 public:	
 	// Called every frame
@@ -181,8 +188,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	bool bAiming;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Combat,meta = (AllowPrivateAccess = "true"))
 	float CameraDefaultFOV;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Combat,meta = (AllowPrivateAccess = "true"))
 	float CameraZoomedFOV;
+	
 	float CameraCurrentFOV;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = Combat, meta = (AllowPrivateAccess = "true"))
@@ -265,6 +275,30 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bCrouching;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float BaseMovementSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float CrouchMovementSpeed;
+
+	float CurrentCapsuleHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float StandingCapsuleHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float CrouchingCapsuleHalfHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float BaseGroundFriction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float CrouchingGroundFriction;
+
+	bool bAimingButtonPressed;
+	
+	
 public:
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const {return CameraBoom;}
