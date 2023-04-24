@@ -68,7 +68,7 @@ void AItem::BeginPlay()
 	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
 
 	SetItemProperties(ItemState);
-	
+	InitializeCustomDepth();
 }
 
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -296,6 +296,11 @@ void AItem::PlayPickupSound()
 	}
 }
 
+void AItem::InitializeCustomDepth()
+{
+	DisableCustomDepth();
+}
+
 void AItem::PlayEquipSound()
 {
 	if(Character)
@@ -352,5 +357,15 @@ void AItem::StartItemCurve(AShooterCharacter* Char)
 	const double ItemRotationYaw{ GetActorRotation().Yaw};
 
 	InterpInitialYawOffset = ItemRotationYaw - CameraRotationYaw;
+}
+
+void AItem::EnableCustomDepth()
+{
+	ItemMesh->SetRenderCustomDepth(true);
+}
+
+void AItem::DisableCustomDepth()
+{
+	ItemMesh->SetRenderCustomDepth(false);
 }
 

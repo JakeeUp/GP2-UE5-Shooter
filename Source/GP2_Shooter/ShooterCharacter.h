@@ -381,5 +381,6 @@ public:
 	int32 GetInterpLocationIndex();
 
 	void IncrementInterpLocItemCount(int32 Index, int32 Amount);
-
+	
+	
 };

@@ -80,6 +80,8 @@ protected:
 	FVector GetInterpLocation();
 
 	void PlayPickupSound();
+
+	virtual void InitializeCustomDepth();
 	
 public:	
 	// Called every frame
@@ -87,6 +89,9 @@ public:
 
 	//called in Ashooterchar pickupitem
 	void PlayEquipSound();
+
+
+	
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
@@ -173,6 +178,9 @@ public:
 	FORCEINLINE USkeletalMeshComponent* GetItemMesh() const {return ItemMesh;}
 
 	void StartItemCurve(AShooterCharacter* Char);
+
+	virtual void EnableCustomDepth();
+	virtual void DisableCustomDepth();
 
 	
 };
