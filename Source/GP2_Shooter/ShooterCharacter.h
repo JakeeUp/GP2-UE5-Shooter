@@ -17,6 +17,20 @@ enum class ECombatState : uint8
 	ECS_NAX UMETA(DisplayName = "DefaultMAX")
 };
 
+USTRUCT(BlueprintType)
+struct FInterpLocation
+{
+	GENERATED_BODY()
+
+	// scene component to use for location for interpings
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	USceneComponent* SceneComponent;
+
+	// number of items interping to the location
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 ItemCount;
+};
+
 UCLASS()
 class GP2_SHOOTER_API AShooterCharacter : public ACharacter
 {
@@ -112,7 +126,13 @@ protected:
 	void Aim();
 
 	void StopAim();
+
+	void PickupAmmo(class AAmmo* Ammo);
+
+	void InitializeInterpLocations();
+
 	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -136,35 +156,35 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float BaseLookUpRate;
 
-	/** Turn rate while not aiming */
+	// Turn rate while not aiming 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float HipTurnRate;
 
-	/** Look up rate when not aiming */
+	// Look up rate when not aiming 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float HipLookUpRate;
 
-	/** Turn rate when aiming */
+	// Turn rate when aiming 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float AimingTurnRate;
 
-	/** Look up rate when aiming */
+	// Look up rate when aiming 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float AimingLookUpRate;
 
-	/** Scale factor for mouse look sensitivity. Turn rate when not aiming. */
+	// Scale factor for mouse look sensitivity. Turn rate when not aiming. 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"), meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float MouseHipTurnRate;
 
-	/** Scale factor for mouse look sensitivity. Look up rate when not aiming. */
+	// Scale factor for mouse look sensitivity. Look up rate when not aiming. 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"), meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float MouseHipLookUpRate;
 
-	/** Scale factor for mouse look sensitivity. Turn rate when aiming. */
+	// Scale factor for mouse look sensitivity. Turn rate when aiming. 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"), meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float MouseAimingTurnRate;
 
-	/** Scale factor for mouse look sensitivity. Look up rate when aiming. */
+	// Scale factor for mouse look sensitivity. Look up rate when aiming. 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"), meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
 	float MouseAimingLookUpRate;
 
@@ -297,24 +317,77 @@ private:
 	float CrouchingGroundFriction;
 
 	bool bAimingButtonPressed;
-	
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* WeaponInterpComp;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* InterpComp1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* InterpComp2;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* InterpComp3;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* InterpComp4;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* InterpComp5;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USceneComponent* InterpComp6;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TArray<FInterpLocation> InterpLocations;
+
+	FTimerHandle PickupSoundTimer;
+	FTimerHandle EquipSoundTimer;
+
+	bool bShouldPlayPickupSound;
+	bool bShouldPlayEquipSound;
+
+	void ResetPickupSoundTimer();
+	void ResetEquipSoundTimer();
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Items, meta = (AllowPrivateAccess = "true"))
+	float PickupSoundResetTime;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = Items, meta = (AllowPrivateAccess = "true"))
+	float EquipSoundResetTime;
 public:
 
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const {return CameraBoom;}
 	FORCEINLINE UCameraComponent* GetFollowCamera() const {return FollowCamera;}
+	
 	FORCEINLINE bool GetAiming() const{return bAiming;}
+	
 	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount;}
+	FORCEINLINE ECombatState GetCombatState() const { return CombatState; }
+	FORCEINLINE bool GetCrouching() const { return bCrouching; }
+	
+	FORCEINLINE bool ShouldPlayPickupSound() const {return bShouldPlayPickupSound;}
+	FORCEINLINE bool ShouldPlayEquipSound() const {return bShouldPlayEquipSound;}
+
+	void StartPickupSoundTimer();
+	void StartEquipSoundTimer();
 
 	//adds/subs from overlapped item count and updates bShouldTraceForItems
 	void IncrementOverlappedItemCount(int8 Amount);
 	UFUNCTION(BlueprintCallable)
 	float GetCrosshairSpreadMultiplier() const;
 
-	FVector GetCameraInterpLocation();
+	//GET OUTTA HERE NO LONGER NEEDED
+	//FVector GetCameraInterpLocation();
 
 	void GetPickupItem(AItem* Item);
 
-	FORCEINLINE ECombatState GetCombatState() const { return CombatState; }
-	FORCEINLINE bool GetCrouching() const { return bCrouching; }
+	FInterpLocation GetInterpLocation(int32 Index);
+	
+	//retunr the index in interp location array with lowest count
+	int32 GetInterpLocationIndex();
+
+	void IncrementInterpLocItemCount(int32 Index, int32 Amount);
+
 };
