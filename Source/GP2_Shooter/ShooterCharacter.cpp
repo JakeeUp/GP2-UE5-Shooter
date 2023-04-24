@@ -851,6 +851,12 @@ void AShooterCharacter::Tick(float DeltaTime)
 	InterpCapsuleHalfHeight(DeltaTime);
 
 	DrawDebugSphere(GetWorld(), GetInterpLocation(0).SceneComponent->GetComponentLocation(), 20.f, 12, FColor::Red, false);
+	DrawDebugSphere(GetWorld(), GetInterpLocation(1).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
+	DrawDebugSphere(GetWorld(), GetInterpLocation(2).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
+	DrawDebugSphere(GetWorld(), GetInterpLocation(3).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
+	DrawDebugSphere(GetWorld(), GetInterpLocation(4).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
+	DrawDebugSphere(GetWorld(), GetInterpLocation(5).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
+	DrawDebugSphere(GetWorld(), GetInterpLocation(6).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
 }
 
 // Called to bind functionality to input
