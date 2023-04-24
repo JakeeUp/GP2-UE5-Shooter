@@ -70,6 +70,7 @@ protected:
 	UFUNCTION()
 	void FinishCrosshairBulletFire();
 
+	//fire button
 	void FireButtonPressed();
 	void FireButtonReleased();
 
@@ -78,57 +79,48 @@ protected:
 	UFUNCTION()
 	void AutoFireReset();
 
+	//line traces
+
 	void TraceForItems();
-
-	//line trace for item
 	bool TraceUnderCrosshairs(FHitResult& OutHitResult, FVector& OutHitLocation);
-	
+
+	//weapon equip
 	class AWeapon* SpawnDefaultWeapon();
-
 	void EquipWeapon(class AWeapon* WeaponToEquip);
-
 	void DropWeapon();
-
 	void SelectButtonPressed();
-
 	void SelectButtonReleased();
-
 	void SwapWeapon(AWeapon* WeaponToSwap);
 
+	//ammo 
 	void InitializeAmmoMap();
-
 	bool WeaponHasAmmo();
-
 	void PlayFireSound();
-
 	void SendBullet();
-
 	void PlayGunFireMontage();
 
+	//reload
 	void ReloadButtonPressed();
-
 	void ReloadWeapon();
-
 	bool CarryingAmmo();
-
 	UFUNCTION(BlueprintCallable)
 	void GrabClip();
-
 	UFUNCTION(BlueprintCallable)
 	void ReleaseClip();
 
+	//crouch and jump
 	void CrouchButtonPressed();
-
 	virtual void Jump() override;
 
+	//capsule height
 	void InterpCapsuleHalfHeight(float DeltaTime);
 
+	//aiming
 	void Aim();
-
 	void StopAim();
 
+	//pickups
 	void PickupAmmo(class AAmmo* Ammo);
-
 	void InitializeInterpLocations();
 
 	
