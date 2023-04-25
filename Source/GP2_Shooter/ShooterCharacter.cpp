@@ -141,7 +141,8 @@ void AShooterCharacter::BeginPlay()
 	}
 	
 	EquipWeapon(SpawnDefaultWeapon());
-	
+	EquippedWeapon->DisableCustomDepth();
+	EquippedWeapon->DisableGlowMaterial();
 	InitializeAmmoMap();
 	GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
 
@@ -471,6 +472,7 @@ void AShooterCharacter::TraceForItems()
 	{
 		TraceHitItemLastFrame->GetPickupWidget()->SetVisibility(false);
 		TraceHitItemLastFrame->DisableCustomDepth();
+		
 	}
 }
 
@@ -536,6 +538,7 @@ void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 		}
 		EquippedWeapon = WeaponToEquip;
 		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
+		EquippedWeapon->DisableCustomDepth();
 	}
 }
 
