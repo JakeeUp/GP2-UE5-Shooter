@@ -78,6 +78,8 @@ AShooterCharacter::AShooterCharacter() :
 	bShouldPlayEquipSound(true),
 	PickupSoundResetTime(.2f),
 	EquipSoundResetTime(.2f)
+	
+
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -141,6 +143,8 @@ void AShooterCharacter::BeginPlay()
 	}
 	
 	EquipWeapon(SpawnDefaultWeapon());
+	Inventory.Add(EquippedWeapon);
+	EquippedWeapon->SetSlotIndex(0);
 	EquippedWeapon->DisableCustomDepth();
 	EquippedWeapon->DisableGlowMaterial();
 	InitializeAmmoMap();
@@ -1017,7 +1021,16 @@ void AShooterCharacter::GetPickupItem(AItem* Item)
 	auto Weapon = Cast<AWeapon>(Item);
 	if(Weapon)
 	{
-		SwapWeapon(Weapon);
+		if(Inventory.Num() < INVENTORY_CAPACITY)
+		{
+			Inventory.Add(Weapon);
+			Weapon->SetItemState(EItemState::EIS_PickedUp);
+		}
+		else
+		{
+			SwapWeapon(Weapon);
+		}
+		
 	}
 
 	auto Ammo = Cast<AAmmo>(Item);

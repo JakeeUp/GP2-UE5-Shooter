@@ -205,6 +205,18 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	float FresnelReflectFraction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* IconBackground;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* IconItem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* AmmoItem;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
+	int32 SlotIndex;
 	
 public:
 	FORCEINLINE UWidgetComponent* GetPickupWidget() const { return PickupWidget; }
@@ -214,6 +226,8 @@ public:
 	FORCEINLINE USoundCue* GetPickupSound() const {return PickupSound;}
 	FORCEINLINE USoundCue* GetEquipSound() const {return EquipSound;}
 	FORCEINLINE int32 GetItemCount() const { return ItemCount; }
+	FORCEINLINE int32 GetSlotIndex() const {return SlotIndex;}
+	FORCEINLINE void SetSlotIndex(int32 Index) {SlotIndex = Index;}
 	
 	void SetItemState(EItemState State);
 	FORCEINLINE USkeletalMeshComponent* GetItemMesh() const {return ItemMesh;}
