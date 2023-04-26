@@ -17,6 +17,7 @@
 #include "Components/SphereComponent.h"
 #include  "Components/CapsuleComponent.h"
 #include  "Ammo.h"
+#include "BulletHitInterface.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -284,8 +285,9 @@ void AShooterCharacter::SetLookRates()
 	}
 }
 
-bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation)
+bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, FHitResult& OutHitResult)
 {
+	FVector OutBeamLocation;
 	FHitResult CrosshairHitResult;
 	bool bCrosshairHit = TraceUnderCrosshairs(CrosshairHitResult, OutBeamLocation);
 
@@ -300,22 +302,22 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, 
 		}
 
 	// Perform a second trace, this time from the gun barrel
-	FHitResult WeaponTraceHit;
+	
 	const FVector WeaponTraceStart{ MuzzleSocketLocation };
 	const FVector StartToEnd{ OutBeamLocation - WeaponTraceStart };
 	const FVector WeaponTraceEnd{ MuzzleSocketLocation + StartToEnd * 1.25f };
 	GetWorld()->LineTraceSingleByChannel(
-		WeaponTraceHit,
+		OutHitResult,
 		WeaponTraceStart,
 		WeaponTraceEnd,
 		ECollisionChannel::ECC_Visibility);
-	if (WeaponTraceHit.bBlockingHit) // object between barrel and BeamEndPoint?
+	if (!OutHitResult.bBlockingHit) // object between barrel and BeamEndPoint?
 		{
-		OutBeamLocation = WeaponTraceHit.Location;
-		return true;
+		OutHitResult.Location = OutBeamLocation;
+		return false;
 		}
 
-	return false;
+	return true;
 }
 
 void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
@@ -641,18 +643,32 @@ void AShooterCharacter::SendBullet()
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
 		}
 
-		FVector BeamEnd;
+		FHitResult BeamHitResult;
 		bool bBeamEnd = GetBeamEndLocation(
-			SocketTransform.GetLocation(), BeamEnd);
+			SocketTransform.GetLocation(), BeamHitResult);
 		if (bBeamEnd)
 		{
-			if (ImpactParticles)
+			//DOES HIT ACTOR IMP BULLETHITINTERFACE
+			if(IsValid(BeamHitResult.GetActor()))
 			{
-				UGameplayStatics::SpawnEmitterAtLocation(
-					GetWorld(),
-					ImpactParticles,
-					BeamEnd);
+				IBulletHitInterface* BulletHitInterface = Cast<IBulletHitInterface>(BeamHitResult.GetActor());
+				if(BulletHitInterface)
+				{
+					BulletHitInterface->BulletHit_Implementation(BeamHitResult);
+				}
 			}
+			else
+			{
+				if (ImpactParticles)
+				{
+				
+					UGameplayStatics::SpawnEmitterAtLocation(
+						GetWorld(),
+						ImpactParticles,
+						BeamHitResult.Location);
+				}
+			}
+			
 
 			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
 				GetWorld(),
@@ -660,7 +676,7 @@ void AShooterCharacter::SendBullet()
 				SocketTransform);
 			if (Beam)
 			{
-				Beam->SetVectorParameter(FName("Target"), BeamEnd);
+				Beam->SetVectorParameter(FName("Target"), BeamHitResult.Location);
 			}
 		}
 	}
@@ -935,7 +951,7 @@ void AShooterCharacter::Tick(float DeltaTime)
 	TraceForItems();
 
 	InterpCapsuleHalfHeight(DeltaTime);
-
+/*
 	DrawDebugSphere(GetWorld(), GetInterpLocation(0).SceneComponent->GetComponentLocation(), 20.f, 12, FColor::Red, false);
 	DrawDebugSphere(GetWorld(), GetInterpLocation(1).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
 	DrawDebugSphere(GetWorld(), GetInterpLocation(2).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
@@ -943,6 +959,8 @@ void AShooterCharacter::Tick(float DeltaTime)
 	DrawDebugSphere(GetWorld(), GetInterpLocation(4).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
 	DrawDebugSphere(GetWorld(), GetInterpLocation(5).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
 	DrawDebugSphere(GetWorld(), GetInterpLocation(6).SceneComponent->GetComponentLocation(), 15.f, 12, FColor::Green, false);
+
+	*/
 }
 
 // Called to bind functionality to input

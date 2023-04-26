@@ -63,7 +63,7 @@ protected:
 	void CameraInterpZoom(float DeltaTime);
 	void SetLookRates();
 
-	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation);
+	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FHitResult& OutHitResult);
 
 	//crosshair 
 	void CalculateCrosshairSpread(float DeltaTime);
