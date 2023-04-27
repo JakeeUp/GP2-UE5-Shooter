@@ -19,6 +19,7 @@
 #include  "Ammo.h"
 #include "BulletHitInterface.h"
 #include "DrawDebugHelpers.h"
+#include "Enemy.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
@@ -690,6 +691,35 @@ void AShooterCharacter::SendBullet()
 				if(BulletHitInterface)
 				{
 					BulletHitInterface->BulletHit_Implementation(BeamHitResult);
+				}
+
+				AEnemy* HitEnemy = Cast<AEnemy>(BeamHitResult.GetActor());
+				if(HitEnemy)
+				{
+					int32 Damage{};
+					if (BeamHitResult.BoneName.ToString() == HitEnemy->GetHeadBone())
+					{
+						// Head shot
+						Damage = EquippedWeapon->GetHeadShotDamage();
+						UGameplayStatics::ApplyDamage(
+							BeamHitResult.GetActor(),
+							Damage,
+							GetController(),
+							this,
+							UDamageType::StaticClass());
+					}
+					else
+					{
+						// Body shot
+						Damage = EquippedWeapon->GetDamage();
+						UGameplayStatics::ApplyDamage(
+							BeamHitResult.GetActor(),
+							Damage,
+							GetController(),
+							this,
+							UDamageType::StaticClass());
+					}
+					HitEnemy->ShowHitNumber(Damage, BeamHitResult.Location);
 				}
 			}
 			else

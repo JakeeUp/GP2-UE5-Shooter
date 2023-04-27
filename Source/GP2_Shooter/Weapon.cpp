@@ -85,6 +85,7 @@ void AWeapon::StopFalling()
 
 void AWeapon::OnConstruction(const FTransform& Transform)
 {
+	Super::OnConstruction(Transform);
 	const FString WeaponTablePath{ TEXT("/Script/Engine.DataTable'/Game/_Game/_DataTables/WeaponDataTable.WeaponDataTable'") };
 	UDataTable* WeaponTableObject = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *WeaponTablePath));
 
@@ -112,6 +113,12 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			SetItemName(WeaponDataRow->ItemName);
 			SetIconItem(WeaponDataRow->InventoryIcon);
 			SetAmmoIcon(WeaponDataRow->AmmoIcon);
+
+
+
+			Damage = WeaponDataRow->Damage;
+			HeadShotDamage = WeaponDataRow->HeadShotDamage;
+			
 		}
 	}
 
