@@ -10,8 +10,8 @@
 
 // Sets default values
 AEnemy::AEnemy() :
-	Health(100.f),
-	MaxHealth(100.f),
+	Health(1000.f),
+	MaxHealth(1000.f),
 	HealthBarDisplayTime(4.f),
 	bCanHitReact(true),
 	HitReactTimeMin(.5f),
