@@ -33,6 +33,8 @@ struct FInterpLocation
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FEquipItemDelegate, int32, CurrentSlotIndex, int32, NewSlotIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHighlightIconDelegate, int32, SlotIndex, bool, bStartAnimation);
+
 
 UCLASS()
 class GP2_SHOOTER_API AShooterCharacter : public ACharacter
@@ -89,7 +91,7 @@ protected:
 
 	//weapon equip
 	class AWeapon* SpawnDefaultWeapon();
-	void EquipWeapon(class AWeapon* WeaponToEquip);
+	void EquipWeapon(class AWeapon* WeaponToEquip,bool bSwapping = false);
 	void DropWeapon();
 	void SelectButtonPressed();
 	void SelectButtonReleased();
@@ -134,6 +136,11 @@ protected:
 	void FiveKeyPressed();
 
 	void ExchangeInventoryItems(int32 CurrentItemIndex, int32 NewItemIndex);
+
+	int32 GetEmptyInventorySlot();
+
+	void HighlightInventorySlot();
+	
 
 public:	
 	// Called every frame
@@ -372,6 +379,12 @@ private:
 
 	UPROPERTY(BlueprintAssignable, Category = Delegates, meta = (AllowPrivateAccess = "true"))
 	FEquipItemDelegate EquipItemDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = Delegates, meta = (AllowPrivateAccess = "true"))
+	FHighlightIconDelegate HighlightIconDelegate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory, meta = (AllowPrivateAccess = "true"))
+	int32 HighlightedSlot;
 	
 public:
 
@@ -406,6 +419,6 @@ public:
 	int32 GetInterpLocationIndex();
 
 	void IncrementInterpLocItemCount(int32 Index, int32 Amount);
-	
+	void UnHighlightInventorySlot();
 	
 };
