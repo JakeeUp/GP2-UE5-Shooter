@@ -420,5 +420,7 @@ public:
 
 	void IncrementInterpLocItemCount(int32 Index, int32 Amount);
 	void UnHighlightInventorySlot();
+
+	FORCEINLINE AWeapon* GetEquippedWeapon() const { return EquippedWeapon; }
 	
 };
