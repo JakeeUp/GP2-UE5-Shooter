@@ -56,6 +56,8 @@ protected:
 	void LookUpAtRate(float Rate);
 	void Turn(float Value);
 	void LookUp(float Value);
+	void SprintStart();
+	void SprintStop();
 
 	//shooting 
 	void FireWeapon();
@@ -312,9 +314,15 @@ private:
 	bool bCrouching;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	float BaseMovementSpeed;
+	bool bSprinting;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float BaseMovementSpeed;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float SprintSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float CrouchMovementSpeed;
 
 	float CurrentCapsuleHalfHeight;

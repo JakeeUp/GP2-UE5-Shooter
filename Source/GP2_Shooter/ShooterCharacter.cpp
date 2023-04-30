@@ -67,7 +67,9 @@ AShooterCharacter::AShooterCharacter() :
 	//combat vars
 	CombatState(ECombatState::ECS_Unoccupied),
 	bCrouching(false),
+	bSprinting(false),
 	BaseMovementSpeed(650.f),
+	SprintSpeed(1000.f),
 	CrouchMovementSpeed(300.f),
 	StandingCapsuleHalfHeight(88.f),
 	CrouchingCapsuleHalfHeight(44.f),
@@ -218,6 +220,41 @@ void AShooterCharacter::LookUp(float Value)
 		LookUpScaleFactor = MouseHipLookUpRate;
 	}
 	AddControllerPitchInput(Value * LookUpScaleFactor);
+}
+
+void AShooterCharacter::SprintStart()
+{
+	bSprinting = true;
+
+	if(bSprinting == true)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+		if (bCrouching)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = CrouchMovementSpeed + 100;
+		}
+	
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
+	}
+}
+
+void AShooterCharacter::SprintStop()
+{
+	bSprinting = false;
+
+	if(bSprinting == false)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
+
+		if (bCrouching)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = CrouchMovementSpeed;
+		}
+	}
+	
 }
 
 void AShooterCharacter::FireWeapon()
@@ -837,11 +874,13 @@ void AShooterCharacter::CrouchButtonPressed()
 	}
 	if (bCrouching)
 	{
+		bSprinting = false;
 		GetCharacterMovement()->MaxWalkSpeed = CrouchMovementSpeed;
 		GetCharacterMovement()->GroundFriction = CrouchingGroundFriction;
 	}
 	else
 	{
+		bSprinting = false;
 		GetCharacterMovement()->MaxWalkSpeed = BaseMovementSpeed;
 		GetCharacterMovement()->GroundFriction = BaseGroundFriction;
 	}
@@ -1136,7 +1175,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		&AShooterCharacter::FourKeyPressed);
 	PlayerInputComponent->BindAction("5Key", IE_Pressed, this,
 		&AShooterCharacter::FiveKeyPressed);
-	
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, 
+		&AShooterCharacter::SprintStart);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, 
+		&AShooterCharacter::SprintStop);
 }
 
 void AShooterCharacter::FinishReloading()
