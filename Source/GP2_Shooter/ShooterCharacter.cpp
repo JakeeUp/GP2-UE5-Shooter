@@ -20,6 +20,8 @@
 #include "BulletHitInterface.h"
 #include "DrawDebugHelpers.h"
 #include "Enemy.h"
+#include "EnemyController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
@@ -82,7 +84,12 @@ AShooterCharacter::AShooterCharacter() :
 	PickupSoundResetTime(.2f),
 	EquipSoundResetTime(.2f),
 	// Icon animation property
-	HighlightedSlot(-1)
+	HighlightedSlot(-1),
+	//char health
+	Health(100.f),
+	MaxHealth(100.f),
+	//Stun
+	StunChance(.25f)
 	
 
 {
@@ -134,6 +141,27 @@ AShooterCharacter::AShooterCharacter() :
 
 	InterpComp6 = CreateDefaultSubobject<USceneComponent>(TEXT("Interpolation Component 6"));
 	InterpComp6->SetupAttachment(GetFollowCamera());
+}
+
+float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	if (Health - DamageAmount <= 0.f)
+	{
+		Health = 0.f;
+		Die();
+
+		auto EnemyController = Cast<AEnemyController>(EventInstigator);
+		if(EnemyController)
+		{
+			EnemyController->GetBlackboardComponent()->SetValueAsBool(FName(TEXT("CharDead")),true);
+		}
+	}
+	else
+	{
+		Health -= DamageAmount;
+	}
+	return DamageAmount;
 }
 
 // Called when the game starts or when spawned
@@ -276,7 +304,7 @@ void AShooterCharacter::FireWeapon()
 void AShooterCharacter::AimingButtonPressed()
 {
 	bAimingButtonPressed = true;
-	if (CombatState != ECombatState::ECS_Reloading)
+	if (CombatState != ECombatState::ECS_Reloading && CombatState != ECombatState::ECS_Equipping && CombatState != ECombatState::ECS_Stunned)
 	{
 		Aim();
 	}
@@ -471,6 +499,7 @@ void AShooterCharacter::StartFireTimer()
 
 void AShooterCharacter::AutoFireReset()
 {
+	if (CombatState == ECombatState::ECS_Stunned) return;
 	CombatState = ECombatState::ECS_Unoccupied;
 
 	if (WeaponHasAmmo())
@@ -728,7 +757,7 @@ void AShooterCharacter::SendBullet()
 				IBulletHitInterface* BulletHitInterface = Cast<IBulletHitInterface>(BeamHitResult.GetActor());
 				if(BulletHitInterface)
 				{
-					BulletHitInterface->BulletHit_Implementation(BeamHitResult);
+					BulletHitInterface->BulletHit_Implementation(BeamHitResult, this, GetController());
 				}
 
 				AEnemy* HitEnemy = Cast<AEnemy>(BeamHitResult.GetActor());
@@ -986,6 +1015,39 @@ void AShooterCharacter::HighlightInventorySlot()
 	HighlightedSlot = EmptySlot;
 }
 
+void AShooterCharacter::EndStun()
+{
+	CombatState = ECombatState::ECS_Unoccupied;
+
+	if (bAimingButtonPressed)
+	{
+		Aim();
+	}
+}
+
+void AShooterCharacter::Die()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && DeathMontage)
+	{
+		AnimInstance->Montage_Play(DeathMontage);
+		AnimInstance->Montage_JumpToSection(FName("DeathA"), DeathMontage);
+	}
+	
+	// Start bullet fire timer for crosshairs
+	StartCrosshairBulletFire();
+}
+
+void AShooterCharacter::FinishDeath()
+{
+	GetMesh()->bPauseAnims = true;
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+	if (PC)
+	{
+		DisableInput(PC);
+	}
+}
+
 void AShooterCharacter::UnHighlightInventorySlot()
 {
 	HighlightIconDelegate.Broadcast(HighlightedSlot, false);
@@ -1184,6 +1246,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void AShooterCharacter::FinishReloading()
 {
+	if (CombatState == ECombatState::ECS_Stunned) return;
+	
 	CombatState = ECombatState::ECS_Unoccupied;
 	if(bAimingButtonPressed)
 	{
@@ -1222,7 +1286,12 @@ void AShooterCharacter::FinishReloading()
 
 void AShooterCharacter::FinishEquipping()
 {
+	if (CombatState == ECombatState::ECS_Stunned) return;
 	CombatState = ECombatState::ECS_Unoccupied;
+	if(bAimingButtonPressed)
+	{
+		Aim();
+	}
 }
 
 void AShooterCharacter::ResetPickupSoundTimer()
@@ -1233,6 +1302,19 @@ void AShooterCharacter::ResetPickupSoundTimer()
 void AShooterCharacter::ResetEquipSoundTimer()
 {
 	bShouldPlayEquipSound = true;
+}
+
+void AShooterCharacter::Stun()
+{
+	if (Health <= 0.f) return;
+	
+	CombatState = ECombatState::ECS_Stunned;
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && HitReactMontage)
+	{
+		AnimInstance->Montage_Play(HitReactMontage);
+	}
 }
 
 void AShooterCharacter::StartPickupSoundTimer()
