@@ -11,7 +11,8 @@ AWeapon::AWeapon() :
 	WeaponType(EWeaponType::EWT_SubmachineGun),
 	AmmoType(EAmmoType::EAT_9mm),
 	ReloadMontageSection(FName(TEXT("Reload SMG"))),
-	ClipBoneName(TEXT("smg_clip"))
+	ClipBoneName(TEXT("smg_clip")),
+	bAutomatic(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -124,6 +125,7 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			SetClipBoneName(WeaponDataRow->ClipBoneName);
 			SetReloadMontageSection(WeaponDataRow->ReloadMontageSection);
 			GetItemMesh()->SetAnimInstanceClass(WeaponDataRow->AnimBP);
+			
 
 			CrosshairsMiddle = WeaponDataRow->CrosshairsMiddle;
 			CrosshairsLeft = WeaponDataRow->CrosshairsLeft;
@@ -135,6 +137,7 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			MuzzleFlash = WeaponDataRow->MuzzleFlash;
 			FireSound = WeaponDataRow->FireSound;
 			BoneToHide = WeaponDataRow->BoneToHide;
+			bAutomatic = WeaponDataRow->bAutomatic;
 
 			Damage = WeaponDataRow->Damage;
 			HeadShotDamage = WeaponDataRow->HeadShotDamage;

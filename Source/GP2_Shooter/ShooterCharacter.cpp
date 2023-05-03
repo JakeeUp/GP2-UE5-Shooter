@@ -503,10 +503,10 @@ void AShooterCharacter::AutoFireReset()
 {
 	if (CombatState == ECombatState::ECS_Stunned) return;
 	CombatState = ECombatState::ECS_Unoccupied;
-
+	if (EquippedWeapon == nullptr) return;
 	if (WeaponHasAmmo())
 	{
-		if (bFireButtonPressed)
+		if (bFireButtonPressed && EquippedWeapon->GetAutomatic())
 		{
 			FireWeapon();
 		}
