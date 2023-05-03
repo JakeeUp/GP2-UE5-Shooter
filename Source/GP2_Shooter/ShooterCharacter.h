@@ -158,6 +158,10 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishDeath();
+	
+
+	UFUNCTION(BlueprintCallable)
+	EPhysicalSurface GetSurfaceType();
 
 	
 public:	
