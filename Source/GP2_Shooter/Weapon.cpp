@@ -26,6 +26,8 @@ void AWeapon::Tick(float DeltaTime)
 		const FRotator MeshRotation{ 0.f, GetItemMesh()->GetComponentRotation().Yaw, 0.f };
 		GetItemMesh()->SetWorldRotation(MeshRotation, false, nullptr, ETeleportType::TeleportPhysics);
 	}
+
+	
 }
 
 void AWeapon::ThrowWeapon()
@@ -139,8 +141,8 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			BoneToHide = WeaponDataRow->BoneToHide;
 			bAutomatic = WeaponDataRow->bAutomatic;
 
-			Damage = WeaponDataRow->Damage;
-			HeadShotDamage = WeaponDataRow->HeadShotDamage;
+			Damage = WeaponDataRow->Damage + DamageMultipierOverload;
+			HeadShotDamage = WeaponDataRow->HeadShotDamage + HeadShotDamageOverload;
 			
 		}
 		if (GetMaterialInstance())

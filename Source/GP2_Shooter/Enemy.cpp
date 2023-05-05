@@ -35,6 +35,7 @@ AEnemy::AEnemy() :
 	AttackWaitTime(1.f),
 	bDying(false),
 	DeathTime(4.f)
+
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -497,6 +498,7 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 	{
 		Health = 0.f;
 		Die();
+	
 	}
 	else
 	{

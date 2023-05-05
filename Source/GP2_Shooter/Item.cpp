@@ -11,7 +11,7 @@
 #include "Curves/CurveVector.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
-
+#include "Weapon.h"
 
 // Sets default values
 AItem::AItem():
@@ -346,10 +346,11 @@ void AItem::InitializeCustomDepth()
 
 void AItem::OnConstruction(const FTransform& Transform)
 {
+	FWeaponDataTable* WeaponDataRow = nullptr;
 	
-
-	FString RarityTablePath(TEXT("/Script/Engine.DataTable'/Game/_Game/_DataTables/ItemRarityDataTable.ItemRarityDataTable'"));
+	FString RarityTablePath(TEXT("/Script/Engine.DataTable'/Game/_Game/_DataTables/WeaponRarityData.WeaponRarityData'"));
 	UDataTable* RarityTableObject = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *RarityTablePath));
+
 	if (RarityTableObject)
 	{
 		FItemRarityTable* RarityRow = nullptr;
@@ -357,6 +358,10 @@ void AItem::OnConstruction(const FTransform& Transform)
 		{
 		case EItemRarity::EIR_Damaged:
 			RarityRow = RarityTableObject->FindRow<FItemRarityTable>(FName("Common"), TEXT(""));
+			if (WeaponDataRow)
+			{
+				WeaponDataRow->Damage *= RarityRow->DamageMultiplier;
+			}
 			break;
 		case EItemRarity::EIR_Common:
 			RarityRow = RarityTableObject->FindRow<FItemRarityTable>(FName("Uncommon"), TEXT(""));
@@ -384,6 +389,7 @@ void AItem::OnConstruction(const FTransform& Transform)
 				GetItemMesh()->SetCustomDepthStencilValue(RarityRow->CustomDepthStencil);
 			}
 		}
+		
 
 	}
 
