@@ -229,12 +229,12 @@ void AEnemy::UpdateHitNumbers()
 
 void AEnemy::AgroSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor == nullptr) return;
+	if (OtherActor == nullptr || EnemyController == nullptr) {
+		return;
+	}
 
 	auto Character = Cast<AShooterCharacter>(OtherActor);
-	if (Character)
-	{
-		// Set the value of the Target Blackboard Key
+	if (Character != nullptr && EnemyController->GetBlackboardComponent() != nullptr) {
 		EnemyController->GetBlackboardComponent()->SetValueAsObject(
 			TEXT("Target"), 
 			Character);
