@@ -156,11 +156,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DataTable, meta = (AllowPrivateAccess = "true"))
 	float AutoFireRate;
 
-	/** Particle system spawned at the BarrelSocket */
+	// Particle system spawned at the BarrelSocket 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DataTable, meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* MuzzleFlash;
 
-	/** Sound played when the weapon is fired */
+	// Sound played when the weapon is fired 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DataTable, meta = (AllowPrivateAccess = "true"))
 	USoundCue* FireSound;
 

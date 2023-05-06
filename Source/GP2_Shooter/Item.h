@@ -130,10 +130,6 @@ public:
 
 	//called in Ashooterchar pickupitem
 	void PlayEquipSound(bool bForcePlaySound = false);
-
-
-	
-
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* ItemMesh;

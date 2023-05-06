@@ -2,7 +2,6 @@
 
 
 #include "Item.h"
-
 #include "ShooterCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
@@ -19,8 +18,6 @@ AItem::AItem():
 	ItemCount(0),
 	ItemRarity(EItemRarity::EIR_Common),
 	ItemState(EItemState::EIS_Pickup),
-
-	
 	ZCurveTime(0.7F),
 	ItemInterpStartLocation(FVector(0.f)),
 	CameraTargetLocation(FVector(0.f)),
@@ -389,8 +386,6 @@ void AItem::OnConstruction(const FTransform& Transform)
 				GetItemMesh()->SetCustomDepthStencilValue(RarityRow->CustomDepthStencil);
 			}
 		}
-		
-
 	}
 
 	if (MaterialInstance)

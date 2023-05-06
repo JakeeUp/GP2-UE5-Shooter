@@ -42,7 +42,7 @@ protected:
 
 	void UpdateHitNumbers();
 
-	/** Called when something overlaps with the agro sphere */
+	//Called when something overlaps with the agro sphere 
 	UFUNCTION()
 	void AgroSphereOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -118,7 +118,7 @@ protected:
 	UFUNCTION()
 	void DestroyEnemy();
 
-	
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = Combat, meta = (AllowPrivateAccess = "true"))
 	bool bDying;
 
 private:
@@ -220,9 +220,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage;
-
-	
-	
 
 	FTimerHandle DeathTimer;
 

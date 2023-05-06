@@ -91,7 +91,8 @@ AShooterCharacter::AShooterCharacter() :
 	Health(100.f),
 	MaxHealth(100.f),
 	//Stun
-	StunChance(.25f)
+	StunChance(.25f),
+	bDead(false)
 	
 
 {
@@ -1029,6 +1030,7 @@ void AShooterCharacter::EndStun()
 
 void AShooterCharacter::Die()
 {
+	bDead = true;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && DeathMontage)
 	{

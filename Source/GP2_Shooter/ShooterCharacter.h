@@ -178,7 +178,7 @@ private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	/*Cam that follows char*/
+	//Cam that follows char
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
@@ -436,6 +436,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* DeathMontage;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = Combat, meta = (AllowPrivateAccess = "true"))
+	bool bDead;
 	
 public:
 
@@ -477,7 +480,6 @@ public:
 
 	void IncrementInterpLocItemCount(int32 Index, int32 Amount);
 	void UnHighlightInventorySlot();
-
 	FORCEINLINE AWeapon* GetEquippedWeapon() const { return EquippedWeapon; }
 	
 };

@@ -52,6 +52,8 @@ AEnemy::AEnemy() :
 	LeftWeaponCollision->SetupAttachment(GetMesh(), FName("LeftWeaponBone"));
 	RightWeaponCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Right Weapon Box"));
 	RightWeaponCollision->SetupAttachment(GetMesh(), FName("RightWeaponBone"));
+	
+
 }
 
 // Called when the game starts or when spawned
@@ -146,9 +148,15 @@ void AEnemy::ShowHealthBar_Implementation()
 
 void AEnemy::Die()
 {
+	UCapsuleComponent* MyCapsuleComponent = nullptr;
+	MyCapsuleComponent = GetCapsuleComponent();
 	if(bDying) return;
 	bDying = true;
 	HideHealthBar();
+	LeftWeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MyCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightWeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && DeathMontage)
@@ -227,7 +235,12 @@ void AEnemy::UpdateHitNumbers()
 	}
 }
 
-void AEnemy::AgroSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEnemy::AgroSphereOverlap(UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
 {
 	if (OtherActor == nullptr || EnemyController == nullptr) {
 		return;
@@ -253,7 +266,12 @@ void AEnemy::SetStunned(bool Stunned)
 	}
 }
 
-void AEnemy::CombatRangeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AEnemy::CombatRangeOverlap(UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
 {
 	if (OtherActor == nullptr) return;
 	auto ShooterCharacter = Cast<AShooterCharacter>(OtherActor);
